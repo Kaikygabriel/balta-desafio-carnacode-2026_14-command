@@ -1,3 +1,4 @@
+/*
 // DESAFIO: Editor de Texto com Undo/Redo
 // PROBLEMA: Um editor de texto precisa implementar operações de desfazer/refazer para
 // múltiplas ações (digitar, deletar, formatar). O código atual chama métodos diretamente,
@@ -5,73 +6,20 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
+using src.Commands;
+using ICommand = src.Interfaces.ICommand;
 
 namespace DesignPatternChallenge
 {
     // Contexto: Editor de texto que precisa registrar e reverter operações
     // Usuário espera poder desfazer/refazer qualquer ação
     
-    public class TextEditor
-    {
-        private string _content;
-        private string _selectedText;
-        private int _cursorPosition;
-
-        public TextEditor()
-        {
-            _content = "";
-            _cursorPosition = 0;
-        }
-
-        public void InsertText(string text)
-        {
-            _content = _content.Insert(_cursorPosition, text);
-            _cursorPosition += text.Length;
-            Console.WriteLine($"[Editor] Texto inserido: '{text}'");
-            Console.WriteLine($"[Editor] Conteúdo atual: '{_content}'");
-        }
-
-        public void DeleteText(int length)
-        {
-            if (_cursorPosition >= length)
-            {
-                _content = _content.Remove(_cursorPosition - length, length);
-                _cursorPosition -= length;
-                Console.WriteLine($"[Editor] {length} caracteres deletados");
-                Console.WriteLine($"[Editor] Conteúdo atual: '{_content}'");
-            }
-        }
-
-        public void SetBold(int start, int length)
-        {
-            Console.WriteLine($"[Editor] Aplicando negrito de {start} a {start + length}");
-            // Simulação de formatação
-        }
-
-        public void RemoveBold(int start, int length)
-        {
-            Console.WriteLine($"[Editor] Removendo negrito de {start} a {start + length}");
-        }
-
-        public void SetCursorPosition(int position)
-        {
-            _cursorPosition = position;
-        }
-
-        public string GetContent()
-        {
-            return _content;
-        }
-
-        public int GetCursorPosition()
-        {
-            return _cursorPosition;
-        }
-    }
 
     // Problema: Aplicação chama métodos diretamente, sem forma de desfazer
     public class EditorApplication
     {
+        private List<ICommand> _commands = new();
         private TextEditor _editor;
 
         public EditorApplication()
@@ -81,35 +29,36 @@ namespace DesignPatternChallenge
 
         public void TypeText(string text)
         {
-            // Problema: Operação executada diretamente
-            // Como desfazer isso depois?
-            _editor.InsertText(text);
+            var command = _editor.InsertText(text);
+            _commands.Add(command);
         }
 
         public void DeleteCharacters(int count)
         {
             // Problema: Não há registro do que foi deletado
             // Como restaurar o texto deletado?
-            _editor.DeleteText(count);
+            var command = _editor.DeleteText(count);
+            _commands.Add(command);
+
         }
 
         public void MakeBold(int start, int length)
         {
             // Problema: Como reverter esta formatação?
-            _editor.SetBold(start, length);
+          var command=   _editor.SetBold(start, length);
+          _commands.Add(command);
+
         }
 
         // Problema: Como implementar Undo/Redo sem refatorar tudo?
         public void Undo()
         {
-            // ??? Como saber qual foi a última operação?
-            // ??? Como reverter sem conhecer os parâmetros originais?
-            Console.WriteLine("❌ Undo não implementado - não há histórico de operações!");
+            _commands.LastOrDefault()?.Desfazer(); 
         }
 
         public void Redo()
         {
-            Console.WriteLine("❌ Redo não implementado!");
+            _commands.LastOrDefault()?.Fazer();
         }
 
         public void ShowContent()
@@ -269,3 +218,4 @@ namespace DesignPatternChallenge
         }
     }
 }
+*/
